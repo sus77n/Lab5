@@ -2,18 +2,20 @@ import React, { useContext, useState } from "react";
 import { Alert, Button, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity } from "react-native";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const EditService =({route}) => {
+const EditService =({route, navigation}) => {
     const {service} = route.params;
     const [newName, setNewName] = useState(service.name);
     const [newPrice, setNewPice] = useState(String(service.price));
-    const {userInfo} = useContext(AuthContext);
-    const loginToken = userInfo.token;
+    // const {userInfo} = useContext(AuthContext);
+    // const loginToken = userInfo.token;
     
-    const edit = (id, newName, newPrice, loginToken) => {
+    const edit = async (id, newName, newPrice) => {
+        const token = (await AsyncStorage.getItem('loginToken'))?.replace(/"/g, '');
         const config = {
             headers: {
-                Authorization: `Bearer ${loginToken}`
+                Authorization: `Bearer ${token}`
             }
         };
         
@@ -23,7 +25,12 @@ const EditService =({route}) => {
             config // Configuration (headers)
         )
         .then(res => {
-            Alert.alert("Update successful");
+            Alert.alert("Updated successful","", [
+                {
+                    text: "OK",
+                    onPress: () => navigation.goBack()
+                }
+            ])
         }).catch(e => {
             console.error("fetch error:" ,e);
         })
@@ -45,7 +52,7 @@ const EditService =({route}) => {
             />
 
             <TouchableOpacity style={styles.button}
-                onPress= {() => edit(service._id, newName, newPrice, loginToken)}>
+                onPress= {() => edit(service._id, newName, newPrice)}>
                 <Text style={styles.buttonTitle}>Update</Text>
             </TouchableOpacity>
         </SafeAreaView>

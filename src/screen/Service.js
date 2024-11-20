@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, FlatList, ScrollView } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { AuthContext } from "../context/AuthContext";
@@ -6,18 +6,65 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AddService from "./AddService";
 import ServiceDetail from "./ServiceDetail";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 
 const Service = ({navigation}) => {
-  const {userInfo, services, loadService} = useContext(AuthContext);
+  // const { userInfo, services, loadService} = useContext(AuthContext);
+  // userInfo
+  const [userInfo, setUserInfo] = useState({});
+  const [services, setServices] = useState([]);
+
+  const getUserInfo = async () =>{
+      try {
+          const storedData = await AsyncStorage.getItem('userInfo');
+          if (storedData) {
+              const parsedData = JSON.parse(storedData);
+              setUserInfo(parsedData);
+              return parsedData;   
+          } else {
+              console.log("parsedData is null");
+          }
+      } catch (error) {
+        console.log("Error when load userinfo: ", error);
+      }
+  }
+
+  const loadService = async() => {
+    try {
+        const serRes = await axios.get('https://kami-backend-5rs0.onrender.com/services')
+        const ser = serRes.data;
+        await AsyncStorage.setItem('services', JSON.stringify(ser));
+    } catch (error) {
+        console.log("Load service failed")
+    }
+}
+
+  const getService = async () => {
+    await loadService();
+    try {
+      const storedData = await AsyncStorage.getItem('services');
+      if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          setServices(parsedData);
+          return parsedData;
+      } else {
+          console.log("parsedData is null");
+      }
+    } catch (error) {
+      console.log("Error when load userinfo: ", error);
+    }
+  }
 
     const nav = useNavigation();
     useEffect(() => {
         const focused = nav.addListener('focus', () =>{
-          loadService();
+          getService();
+          getUserInfo();
         });
         return focused;
-    }, [services]);
+    }, [navigation]);
 
     return (
         <SafeAreaView style = {styles.layout}>
@@ -135,7 +182,7 @@ const styles = StyleSheet.create({
     },
 
     price: {
-    fontWeight: "400",
+      fontWeight: "400",
       fontSize: 18,
       color: "black",
     }

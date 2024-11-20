@@ -4,19 +4,18 @@ import { IconButton } from 'react-native-paper';
 import { Menu, MenuOption, MenuOptions, MenuTrigger } from "react-native-popup-menu";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ServiceDetail =({route, navigation}) => {
     const {service} = route.params; 
-    const {userInfo} = useContext(AuthContext);
-    console.log(service);
-
-    const funcDelete = (id, loginToken) =>{
+    // const {userInfo} = useContext(AuthContext);
+    const funcDelete = async (id) =>{
+        const token = (await AsyncStorage.getItem('loginToken'))?.replace(/"/g, '');
         const config = {
             headers: {
-                Authorization: `Bearer ${loginToken}`
+                Authorization: `Bearer ${token}`
             }
         };
-        
         axios.delete(
             "https://kami-backend-5rs0.onrender.com/services/" + id,
             {id: id}, // Payload (request body)
@@ -56,7 +55,7 @@ const ServiceDetail =({route, navigation}) => {
                                             },
                                             {
                                                 text: 'Yes',
-                                                onPress: () => {funcDelete(service._id, userInfo.token)}
+                                                onPress: () => {funcDelete(service._id)}
                                             }
                                         ])
                                         }}

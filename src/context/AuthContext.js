@@ -13,37 +13,37 @@ export const AuthProvider = ({ children }) => {
         try {
             const authRes = await axios.post('https://kami-backend-5rs0.onrender.com/auth', { phone, password })
             const userInfo = authRes.data;
-            console.log(authRes);
-            
             setUserInfo(userInfo);
             await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
-            console.log(userInfo);
+            await AsyncStorage.setItem('loginToken', JSON.stringify(userInfo.token))
+            console.log("Login successful, userinfor: ",userInfo)
+            console.log("login token:",userInfo.token);
         } catch (error) {
             Alert.alert("Login Failed", "Please try again.");
         }
     };
 
-    const loadService = async() => {
-        try {
-            const serRes = await axios.get('https://kami-backend-5rs0.onrender.com/services')
-            const ser = serRes.data;
-            setServices(ser);
-            await AsyncStorage.setItem('services',JSON.stringify(ser)); 
-        } catch (error) {
-            Alert.alert("Login Failed", "Please try again.");
-        }
-    }
+    // const loadService = async() => {
+    //     try {
+    //         const serRes = await axios.get('https://kami-backend-5rs0.onrender.com/services')
+    //         const ser = serRes.data;
+    //         setServices(ser);
+    //         await AsyncStorage.setItem('services', JSON.stringify(ser));
+    //     } catch (error) {
+    //         Alert.alert("Load service Failed");
+    //     }
+    // }
 
     useEffect(() => {
-        console.log("Updated services:", services);
-    }, [services]);
+        
+    }, [userInfo]);
 
     return (
         <AuthContext.Provider value={{ 
             userInfo, 
             login, 
             services,
-            loadService
+            // loadService
             }}
         >
             {children}
