@@ -14,7 +14,6 @@ const Customer =({navigation}) => {
             const cus = getCus.data;
             setCustomers(cus);
             await AsyncStorage.setItem('Customers', JSON.stringify(cus));
-            console.log(cus);
         } catch (error) {
             console.log("Customer load error:",error);
         }
@@ -23,7 +22,9 @@ const Customer =({navigation}) => {
     const nav = useNavigation();
 
     useEffect(() => {
-        const focused = nav.addListener('focus', () => {loadCustomer()});
+        const focused = nav.addListener('focus', () => {
+            loadCustomer()
+        });
         return focused;
     }, [customers])
 
@@ -33,7 +34,7 @@ const Customer =({navigation}) => {
                 data={customers}
                 renderItem={({item}) => 
                     <TouchableOpacity style={styles.customerContainer}
-                                    onPress={()=>{}}
+                                    onPress={()=>{navigation.navigate('Customer Detail', {customer: item})}}
                     >
                         <View>
                             <Text style={styles.title}>Customer: <Text style={styles.info}>{item.name}</Text></Text>

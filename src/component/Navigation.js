@@ -6,16 +6,6 @@ import LoginScreen from "../screen/Login";
 import Service from "../screen/Service";
 import { AuthContext } from "../context/AuthContext";
 import MainNavigation from "./MainNavigation";
-import AddService from "../screen/AddService";
-import ServiceDetail from "../screen/ServiceDetail";
-import EditService from "../screen/EditService";
-import { IconButton } from 'react-native-paper';
-import AddCustomer from "../screen/AddCustomer";
-import Customer from "../screen/Customer";
-import Transaction from "../screen/Transaction";
-import TransactionDetail from "../screen/TransactionDetail";
-import Settings from "../screen/Setting";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const Stack = createNativeStackNavigator();

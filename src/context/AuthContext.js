@@ -16,8 +16,6 @@ export const AuthProvider = ({ children }) => {
             setUserInfo(userInfo);
             await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
             await AsyncStorage.setItem('loginToken', JSON.stringify(userInfo.token))
-            console.log("Login successful, userinfor: ",userInfo)
-            console.log("login token:",userInfo.token);
         } catch (error) {
             Alert.alert("Login Failed", "Please try again.");
         }
